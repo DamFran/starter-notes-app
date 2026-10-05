@@ -1,16 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { addNote } from '../utils/local-data';
+import LocaleContext from '../contexts/LocaleContext';
+import { addNote } from '../utils/network-data';
 
 function AddPage() {
+  const { locale } = useContext(LocaleContext);
   const [title, setTitle] = useState('');
   const [body, setBody] = useState('');
   const navigate = useNavigate();
 
-  const onSaveHandler = () => {
+  const onSaveHandler = async () => {
     if (!title && !body) return;
-    addNote({ title, body });
-    navigate('/');
+    const { error } = await addNote({ title, body });
+    if (!error) {
+      navigate('/');
+    }
   };
 
   return (
@@ -19,13 +23,13 @@ function AddPage() {
         <input
           className="add-new-page__input__title"
           type="text"
-          placeholder="Catatan rahasia"
+          placeholder={locale === 'id' ? 'Catatan rahasia' : 'Secret notes'}
           value={title}
           onChange={(e) => setTitle(e.target.value)}
         />
         <div
           className="add-new-page__input__body"
-          data-placeholder="Sebenarnya saya adalah ..."
+          data-placeholder={locale === 'id' ? 'Sebenarnya saya adalah ...' : 'Actually I am ...'}
           contentEditable
           suppressContentEditableWarning
           onInput={(e) => setBody(e.currentTarget.innerText)}
@@ -35,7 +39,7 @@ function AddPage() {
         <button
           className="action"
           type="button"
-          title="Simpan"
+          title={locale === 'id' ? 'Simpan' : 'Save'}
           onClick={onSaveHandler}
         >
           <svg stroke="currentColor" fill="none" strokeWidth="2" viewBox="0 0 24 24" width="24" height="24">

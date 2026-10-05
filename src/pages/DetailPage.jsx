@@ -1,45 +1,59 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getNote, deleteNote, archiveNote, unarchiveNote } from '../utils/local-data';
+import LocaleContext from '../contexts/LocaleContext';
+import { getNote, deleteNote, archiveNote, unarchiveNote } from '../utils/network-data';
 import { showFormattedDate } from '../utils';
 
 function DetailPage() {
+  const { locale } = useContext(LocaleContext);
   const { id } = useParams();
   const navigate = useNavigate();
   const [note, setNote] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchedNote = getNote(id);
-    setNote(fetchedNote || null);
-    setLoading(false);
+    getNote(id).then(({ error, data }) => {
+      if (!error) {
+        setNote(data);
+      }
+      setLoading(false);
+    });
   }, [id]);
 
   if (loading) {
-    return null;
+    return (
+      <section className="detail-page">
+        <p>{locale === 'id' ? 'Memuat catatan...' : 'Loading notes...'}</p>
+      </section>
+    );
   }
 
   if (!note) {
     return (
       <section className="detail-page">
-        <p>Catatan tidak ditemukan!</p>
+        <p>{locale === 'id' ? 'Catatan tidak ditemukan!' : 'Note not found!'}</p>
       </section>
     );
   }
 
-  const onArchiveHandler = () => {
+  const onArchiveHandler = async () => {
     if (note.archived) {
-      unarchiveNote(id);
+      await unarchiveNote(id);
     } else {
-      archiveNote(id);
+      await archiveNote(id);
     }
     navigate('/');
   };
 
-  const onDeleteHandler = () => {
-    deleteNote(id);
+  const onDeleteHandler = async () => {
+    await deleteNote(id);
     navigate('/');
   };
+
+  const archiveTitle = note.archived
+    ? (locale === 'id' ? 'Aktifkan' : 'Unarchive')
+    : (locale === 'id' ? 'Arsipkan' : 'Archive');
+  const deleteTitle = locale === 'id' ? 'Hapus' : 'Delete';
 
   return (
     <section className="detail-page">
@@ -50,7 +64,7 @@ function DetailPage() {
         <button
           className="action"
           type="button"
-          title={note.archived ? 'Aktifkan' : 'Arsipkan'}
+          title={archiveTitle}
           onClick={onArchiveHandler}
         >
           {note.archived ? (
@@ -66,7 +80,7 @@ function DetailPage() {
         <button
           className="action"
           type="button"
-          title="Hapus"
+          title={deleteTitle}
           onClick={onDeleteHandler}
         >
           <svg stroke="currentColor" fill="none" strokeWidth="2" viewBox="0 0 24 24" width="24" height="24">

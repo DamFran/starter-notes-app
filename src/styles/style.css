@@ -13,7 +13,7 @@
 
 [data-theme="light"] {
   --background: #DDDDDD;
-  --suface: #FFFFFF;
+  --surface: #FFFFFF;
   --on-background: #333333;
   --on-background-grey: #6d6d6d;
   --on-surface: #333333;
@@ -44,7 +44,7 @@ body {
 header {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   padding: 16px;
   border-bottom: 1px solid var(--on-background);
 }
@@ -53,10 +53,18 @@ header h1 {
   flex: 1;
 }
 
+header .navigation ul {
+  display: flex;
+  align-items: center;
+  list-style: none;
+  gap: 8px;
+}
+
 header .navigation ul li {
-  display: inline-block;
+  display: flex;
+  align-items: center;
   font-size: 24px;
-  margin: 0 8px;
+  margin: 0 4px;
 }
 
 main {
@@ -211,11 +219,13 @@ main {
   color: var(--on-background);
   display: flex;
   align-items: center;
-  margin: 0 16px;
+  justify-content: center;
+  margin: 0;
+  padding: 4px;
 }
 
 .toggle-theme {
-  font-size: 36px;
+  font-size: 32px;
 }
 
 .toggle-locale {

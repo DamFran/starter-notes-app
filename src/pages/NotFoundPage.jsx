@@ -1,13 +1,16 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
+import LocaleContext from '../contexts/LocaleContext';
 
 function NotFoundPage() {
+  const { locale } = useContext(LocaleContext);
+
   return (
     <section>
       <h2>404</h2>
-      <p>Halaman tidak ditemukan</p>
+      <p>{locale === 'id' ? 'Halaman tidak ditemukan' : 'Page not found'}</p>
       <p style={{ marginTop: '16px' }}>
-        <Link to="/">Kembali ke Halaman Utama</Link>
+        <Link to="/">{locale === 'id' ? 'Kembali ke Halaman Utama' : 'Back to Home'}</Link>
       </p>
     </section>
   );
